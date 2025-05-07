@@ -15,11 +15,29 @@ resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
     capacity: 1
   }
   properties: {
-    virtualNetworkType: 'External'
+    publisherName: publisherName
+    publisherEmail: publisherEmail
     virtualNetworkConfiguration: {
       subnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
     }
-    publisherName: publisherName
-    publisherEmail: publisherEmail
+  }
+}
+
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
+  name: '${apimName}-pe'
+  location: location
+  properties: {
+    subnet: {
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+    }
+    privateLinkServiceConnections: [
+      {
+        name: 'apimPrivateLink'
+        properties: {
+          privateLinkServiceId: apim.id
+          groupIds: ['Gateway']
+        }
+      }
+    ]
   }
 }

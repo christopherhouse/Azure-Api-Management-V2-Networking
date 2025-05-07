@@ -25,5 +25,8 @@ module frontDoorModule 'modules/frontdoor.bicep' = {
   params: {
     location: location
     frontDoorName: frontDoorName
+    apimName: apimName
+    apimPrivateEndpointName: '${apimName}-pe'
+    apimPrivateDnsZoneName: 'privatelink.azure-api.net'
   }
 }
