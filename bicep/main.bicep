@@ -7,21 +7,66 @@ param subnetName string
 param frontDoorName string
 param publisherName string
 param publisherEmail string
+param vnetAddressSpace array
+param subnetConfigurations array
+param nsgName string = '${vnetName}-apim-out-nsg'
+param logAnalyticsWorkspaceName string
 
-module apimModule 'modules/apim.bicep' = {
-  name: 'apimDeployment'
+module nsgModule 'modules/nsg.bicep' = {
+  name: 'nsg-${deployment().name}'
   params: {
     location: location
-    apimName: apimName
-    vnetName: vnetName
-    subnetName: subnetName
-    publisherName: publisherName
-    publisherEmail: publisherEmail
+    nsgName: nsgName
   }
 }
 
+module vnetModule 'modules/vnet.bicep' = {
+  name: 'vnet-${deployment().name}'
+  params: {
+    location: location
+    vnetName: vnetName
+    vnetAddressSpace: vnetAddressSpace
+    subnetConfigurations: subnetConfigurations
+  }
+  dependsOn: [
+    nsgModule
+  ]
+}
+
+resource vnet 'Microsoft.Network/virtualNetworks@2024-05-01' existing = {
+  name: vnetName
+}
+
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' existing = {
+  parent: vnet
+  name: subnetName
+}
+
+module logAnalyticsWorkspaceModule 'modules/logAnalyticsWorkspace.bicep' = {
+  name: 'log-${deployment().name}'
+  params: {
+    location: location
+    workspaceName: logAnalyticsWorkspaceName
+  }
+}
+
+module apimModule 'modules/apim.bicep' = {
+  name: 'apim-${deployment().name}'
+  params: {
+    location: location
+    apimName: apimName
+    subnetResourceId: subnet.id
+    publisherName: publisherName
+    publisherEmail: publisherEmail
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceModule.outputs.workspaceId
+  }
+  dependsOn: [
+    vnetModule
+  ]
+}
+
 module frontDoorModule 'modules/frontdoor.bicep' = {
-  name: 'frontDoorDeployment'
+  name: 'afd-${deployment().name}'  
   params: {
     location: location
     frontDoorName: frontDoorName

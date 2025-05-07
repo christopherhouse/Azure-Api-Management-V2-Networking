@@ -3,6 +3,25 @@ param users_1_lastName string
 param profiles_afd_apimv2_afd_name string = 'afd-apimv2-afd'
 param service_apim_apimv2_afd_name string = 'apim-apimv2-afd'
 param virtualNetworks_vn_apimv2_afd_name string = 'vn-apimv2-afd'
+param virtualNetworks_vn_apimv2_afd_addressSpace array = [
+  '10.0.0.0/16'
+]
+param virtualNetworks_vn_apimv2_afd_subnetConfigurations array = [
+  {
+    name: 'private-endpoints'
+    addressPrefix: '10.0.0.0/24'
+    networkSecurityGroup: null
+    privateEndpointNetworkPolicies: 'Disabled'
+    privateLinkServiceNetworkPolicies: 'Enabled'
+  }
+  {
+    name: 'apim-out'
+    addressPrefix: '10.0.1.0/24'
+    networkSecurityGroup: null
+    privateEndpointNetworkPolicies: 'Enabled'
+    privateLinkServiceNetworkPolicies: 'Enabled'
+  }
+]
 param privateEndpoints_apim_apimv2_afd_pe_name string = 'apim-apimv2-afd-pe'
 param workspaces_log_apimv2_afd_name string = 'log-apimv2-afd'
 param networkSecurityGroups_nsg_apimv2_afd_apim_name string = 'nsg-apimv2-afd-apim'
