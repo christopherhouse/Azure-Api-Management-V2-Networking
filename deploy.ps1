@@ -3,8 +3,8 @@ param (
     [string]$ResourceGroup
 )
 
-# Generate a unique 8-character alphanumeric string for the deployment name
-$DeploymentName = "deploy-" + (-join ((65..90) + (97..122) + (48..57) | Get-Random -Count 8 | ForEach-Object { [char]$_ }))
+# Generate a unique deployment name using the first section of a GUID
+$DeploymentName = "main-" + (New-Guid).ToString().Split('-')[0]
 
 # Display the deployment name
 Write-Host "Deployment Name: $DeploymentName"
