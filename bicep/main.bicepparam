@@ -2,8 +2,8 @@
 
 using 'main.bicep'
 
-param location = 'eastus'
-param apimName = 'cmh-apim-v2-network'
+param location = 'eastus2'
+param apimName = 'cmh-apim-v2-network-part-ii'
 param vnetName = 'cmh-apim-v2-vnet'
 param subnetName = 'apim-out'
 param vnetAddressSpace = [
@@ -28,7 +28,8 @@ param subnetConfigurations = [
   }
 ]
 param nsgName = 'nsg-apim-out'
-param frontDoorName = 'myFrontDoorInstance'
+param frontDoorName = 'cmh-apim-v2-frontdoor'
 param publisherName = 'Default Publisher'
 param publisherEmail = 'publisher@example.com'
 param logAnalyticsWorkspaceName = 'cmh-log-analytics'
+param wafPolicyName = 'wafPolicy'

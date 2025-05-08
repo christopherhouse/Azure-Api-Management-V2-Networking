@@ -4,19 +4,21 @@ param location string = resourceGroup().location
 param apimName string
 param vnetName string
 param subnetName string
-param frontDoorName string
+param frontDoorName string = '${apimName}-afd'
 param publisherName string
 param publisherEmail string
 param vnetAddressSpace array
 param subnetConfigurations array
 param nsgName string = '${vnetName}-apim-out-nsg'
 param logAnalyticsWorkspaceName string
+param wafPolicyName string = '${frontDoorName}-waf-policy'
 
 module nsgModule 'modules/nsg.bicep' = {
   name: 'nsg-${deployment().name}'
   params: {
     location: location
     nsgName: nsgName
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceModule.outputs.workspaceId // Pass the Log Analytics Workspace resource ID
   }
 }
 
@@ -65,13 +67,23 @@ module apimModule 'modules/apim.bicep' = {
   ]
 }
 
+module wafPolicyModule 'modules/wafPolicy.bicep' = {
+  name: 'wafPolicyDeployment'
+  params: {
+    location: location
+    wafPolicyName: wafPolicyName
+  }
+}
+
 module frontDoorModule 'modules/frontdoor.bicep' = {
-  name: 'afd-${deployment().name}'  
+  name: 'frontDoorDeployment'
   params: {
     location: location
     frontDoorName: frontDoorName
     apimName: apimName
-    apimPrivateEndpointName: '${apimName}-pe'
     apimPrivateDnsZoneName: 'privatelink.azure-api.net'
+    wafPolicyId: wafPolicyModule.outputs.wafPolicyId
+    vnetId: vnet.id
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceModule.outputs.workspaceId // Pass the Log Analytics Workspace resource ID
   }
 }

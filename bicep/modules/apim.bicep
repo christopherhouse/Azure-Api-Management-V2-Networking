@@ -22,13 +22,15 @@ resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
     }
     virtualNetworkType: 'External'
     natGatewayState: 'Enabled'
-    apiVersionConstraint: {}
-    publicNetworkAccess: 'Enabled'
+    apiVersionConstraint: {
+      minApiVersion: '2021-08-01'
+    }
+    publicNetworkAccess: 'Disabled'
   }
 }
 
 resource apimDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'diag-${deployment().name}'
+  name: 'logs-and-metrics'
   scope: apim
   properties: {
     workspaceId: logAnalyticsWorkspaceId
