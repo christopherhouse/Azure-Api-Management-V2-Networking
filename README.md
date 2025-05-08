@@ -1,6 +1,6 @@
 # 🌐 Azure API Management v2 Networking with Front Door Integration
 
-Welcome to the **Azure API Management v2 Networking** repository! This project is designed to deploy and configure a robust API Management (APIM) solution integrated with Azure Front Door, Virtual Networks (VNet), and other essential Azure services. 🚀
+Welcome to the **Azure API Management v2 Networking** repository! This project is designed to deploy and configure API Management Standard v2 with all public access routed through Azure Front Door and vnet integrated for egress. 🚀
 
 ---
 
@@ -13,16 +13,6 @@ This repository contains Bicep templates to deploy the following Azure resources
 - **Virtual Network (VNet)**: Configured with subnets and network security groups (NSGs).
 - **Web Application Firewall (WAF)**: Protects your APIs with managed and custom rules.
 - **Log Analytics Workspace**: Centralized logging and monitoring for all resources.
-
----
-
-## 🛠️ Deployment Architecture
-
-Below is a high-level architecture diagram of the deployed solution:
-
-![Architecture Diagram](https://via.placeholder.com/800x400?text=Architecture+Diagram)
-
----
 
 ## 📦 Repository Structure
 
@@ -45,24 +35,24 @@ Below is a high-level architecture diagram of the deployed solution:
 
 ## ⚙️ Parameters
 
-To successfully deploy the solution, the following parameters are required:
+The following table describes the parameters for `main.bicep`:
 
-| Parameter Name            | Description                                                                 | Example Value                  |
-|---------------------------|-----------------------------------------------------------------------------|--------------------------------|
-| `location`                | Azure region for resource deployment                                       | `eastus2`                     |
-| `apimName`                | Name of the API Management instance                                        | `my-apim-instance`            |
-| `vnetName`                | Name of the Virtual Network                                                | `my-vnet`                     |
-| `subnetName`              | Name of the subnet for APIM                                                | `apim-subnet`                 |
-| `vnetAddressSpace`        | Address space for the Virtual Network                                      | `['10.0.0.0/16']`             |
-| `subnetConfigurations`    | Subnet configurations for the VNet                                         | See `main.bicepparam`         |
-| `nsgName`                 | Name of the Network Security Group                                         | `my-nsg`                      |
-| `frontDoorName`           | Name of the Azure Front Door instance                                      | `my-frontdoor`                |
-| `publisherName`           | Publisher name for APIM                                                   | `Default Publisher`           |
-| `publisherEmail`          | Publisher email for APIM                                                  | `publisher@example.com`       |
-| `logAnalyticsWorkspaceName` | Name of the Log Analytics Workspace                                      | `my-log-analytics`            |
-| `wafPolicyName`           | Name of the Web Application Firewall policy                                | `my-waf-policy`               |
-| `apimPublicNetworkAccess` | Public network access setting for APIM (`Enabled` or `Disabled`)           | `Disabled`                    |
-| `developerPortalStatus`   | Developer portal status for APIM (`Enabled` or `Disabled`)                 | `Enabled`                     |
+| Parameter Name            | Default Value       | Allowed Values          | Required | Data Type   | Description                                                                 |
+|---------------------------|---------------------|--------------------------|----------|-------------|-----------------------------------------------------------------------------|
+| `location`                | `resourceGroup().location` | N/A                  | Yes      | `string`    | Azure region for resource deployment                                       |
+| `apimName`                | N/A                 | N/A                      | Yes      | `string`    | Name of the API Management instance                                        |
+| `vnetName`                | N/A                 | N/A                      | Yes      | `string`    | Name of the Virtual Network                                                |
+| `subnetName`              | N/A                 | N/A                      | Yes      | `string`    | Name of the subnet for APIM                                                |
+| `vnetAddressSpace`        | N/A                 | N/A                      | Yes      | `string[]`  | Array of address prefixes for the Virtual Network                          |
+| `subnetConfigurations`    | N/A                 | N/A                      | Yes      | `array`     | Subnet configurations for the VNet                                         |
+| `nsgName`                 | N/A                 | N/A                      | Yes      | `string`    | Name of the Network Security Group                                         |
+| `frontDoorName`           | N/A                 | N/A                      | Yes      | `string`    | Name of the Azure Front Door instance                                      |
+| `publisherName`           | N/A                 | N/A                      | Yes      | `string`    | Publisher name for APIM                                                   |
+| `publisherEmail`          | N/A                 | N/A                      | Yes      | `string`    | Publisher email for APIM                                                  |
+| `logAnalyticsWorkspaceName` | N/A               | N/A                      | Yes      | `string`    | Name of the Log Analytics Workspace                                        |
+| `wafPolicyName`           | N/A                 | N/A                      | Yes      | `string`    | Name of the Web Application Firewall policy                                |
+| `apimPublicNetworkAccess` | `Disabled`          | `Enabled`, `Disabled`    | Yes      | `string`    | Public network access setting for APIM                                     |
+| `developerPortalStatus`   | `Enabled`           | `Enabled`, `Disabled`    | Yes      | `string`    | Developer portal status for APIM                                           |
 
 ---
 
@@ -97,50 +87,10 @@ az deployment group create \
 
 ---
 
-## 📖 Example Parameters File
-
-Below is an example `main.bicepparam` file:
-
-```bicep-params
-param location = 'eastus2'
-param apimName = 'my-apim-instance'
-param vnetName = 'my-vnet'
-param subnetName = 'apim-subnet'
-param vnetAddressSpace = [
-  '10.0.0.0/16'
-]
-param subnetConfigurations = [
-  {
-    name: 'apim-subnet'
-    addressPrefix: '10.0.1.0/24'
-    nsgName: 'my-nsg'
-    privateEndpointNetworkPolicies: 'Enabled'
-    privateLinkServiceNetworkPolicies: 'Enabled'
-    delegation: null
-  }
-]
-param nsgName = 'my-nsg'
-param frontDoorName = 'my-frontdoor'
-param publisherName = 'Default Publisher'
-param publisherEmail = 'publisher@example.com'
-param logAnalyticsWorkspaceName = 'my-log-analytics'
-param wafPolicyName = 'my-waf-policy'
-param apimPublicNetworkAccess = 'Disabled'
-param developerPortalStatus = 'Enabled'
-```
-
----
-
-## 🛡️ Security Best Practices
+## Security Best Practices
 
 - Use [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/) to store sensitive information.
 - Enable diagnostic settings for all resources to monitor and log activities.
 - Regularly review and update your WAF rules to protect against new threats.
-
----
-
-## 📞 Support
-
-For any issues or questions, please open an issue in this repository or contact your Azure administrator.
 
 ---

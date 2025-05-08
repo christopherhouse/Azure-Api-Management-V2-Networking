@@ -7,7 +7,7 @@ param subnetName string
 param frontDoorName string
 param publisherName string
 param publisherEmail string
-param vnetAddressSpace array
+param vnetAddressSpace string[]
 param subnetConfigurations array
 param nsgName string
 param logAnalyticsWorkspaceName string

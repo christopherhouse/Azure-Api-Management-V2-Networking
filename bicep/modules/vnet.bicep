@@ -1,6 +1,6 @@
 param location string
 param vnetName string
-param vnetAddressSpace array
+param vnetAddressSpace string[]
 param subnetConfigurations array
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2024-05-01' = {
