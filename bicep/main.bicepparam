@@ -3,7 +3,7 @@
 using 'main.bicep'
 
 param location = 'eastus2'
-param apimName = 'cmh-apim-v2-network-part-ii'
+param apimName = 'cmh-apim-v2-network-part-iv'
 param vnetName = 'cmh-apim-v2-vnet'
 param subnetName = 'apim-out'
 param vnetAddressSpace = [
@@ -33,3 +33,5 @@ param publisherName = 'Default Publisher'
 param publisherEmail = 'publisher@example.com'
 param logAnalyticsWorkspaceName = 'cmh-log-analytics'
 param wafPolicyName = 'wafPolicy'
+param apimPublicNetworkAccess = 'Enabled'
+param developerPortalStatus = 'Enabled'

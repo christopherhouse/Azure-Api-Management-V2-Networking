@@ -4,14 +4,25 @@ param location string = resourceGroup().location
 param apimName string
 param vnetName string
 param subnetName string
-param frontDoorName string = '${apimName}-afd'
+param frontDoorName string
 param publisherName string
 param publisherEmail string
 param vnetAddressSpace array
 param subnetConfigurations array
-param nsgName string = '${vnetName}-apim-out-nsg'
+param nsgName string
 param logAnalyticsWorkspaceName string
-param wafPolicyName string = '${frontDoorName}-waf-policy'
+param wafPolicyName string
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param apimPublicNetworkAccess string
+
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param developerPortalStatus string
 
 module nsgModule 'modules/nsg.bicep' = {
   name: 'nsg-${deployment().name}'
@@ -61,6 +72,8 @@ module apimModule 'modules/apim.bicep' = {
     publisherName: publisherName
     publisherEmail: publisherEmail
     logAnalyticsWorkspaceId: logAnalyticsWorkspaceModule.outputs.workspaceId
+    apimPublicNetworkAccess: apimPublicNetworkAccess
+    developerPortalStatus: developerPortalStatus
   }
   dependsOn: [
     vnetModule
@@ -68,7 +81,7 @@ module apimModule 'modules/apim.bicep' = {
 }
 
 module wafPolicyModule 'modules/wafPolicy.bicep' = {
-  name: 'wafPolicyDeployment'
+  name: 'waf-${deployment().name}'
   params: {
     location: location
     wafPolicyName: wafPolicyName
@@ -76,7 +89,7 @@ module wafPolicyModule 'modules/wafPolicy.bicep' = {
 }
 
 module frontDoorModule 'modules/frontdoor.bicep' = {
-  name: 'frontDoorDeployment'
+  name: 'afd-${deployment().name}'
   params: {
     location: location
     frontDoorName: frontDoorName
@@ -84,6 +97,7 @@ module frontDoorModule 'modules/frontdoor.bicep' = {
     apimPrivateDnsZoneName: 'privatelink.azure-api.net'
     wafPolicyId: wafPolicyModule.outputs.wafPolicyId
     vnetId: vnet.id
-    logAnalyticsWorkspaceId: logAnalyticsWorkspaceModule.outputs.workspaceId // Pass the Log Analytics Workspace resource ID
+    logAnalyticsWorkspaceId: logAnalyticsWorkspaceModule.outputs.workspaceId
+    apimResourceId: apimModule.outputs.id // Update to use the new output property name
   }
 }

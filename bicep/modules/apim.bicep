@@ -6,6 +6,16 @@ param subnetResourceId string
 param publisherName string
 param publisherEmail string
 param logAnalyticsWorkspaceId string
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param apimPublicNetworkAccess string
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param developerPortalStatus string
 
 resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
   name: apimName
@@ -25,7 +35,8 @@ resource apim 'Microsoft.ApiManagement/service@2024-06-01-preview' = {
     apiVersionConstraint: {
       minApiVersion: '2021-08-01'
     }
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: apimPublicNetworkAccess
+    developerPortalStatus: developerPortalStatus
   }
 }
 
@@ -53,4 +64,6 @@ resource apimDiagnosticSetting 'Microsoft.Insights/diagnosticSettings@2021-05-01
     ]
   }
 }
+
+output id string = apim.id
 

@@ -7,6 +7,7 @@ param apimPrivateDnsZoneName string
 param wafPolicyId string // WAF policy resource ID
 param vnetId string // Add a parameter for the VNet resource ID
 param logAnalyticsWorkspaceId string // Add a parameter for the Log Analytics Workspace resource ID
+param apimResourceId string // Add a parameter for the APIM resource ID
 
 resource frontDoorProfile 'Microsoft.Cdn/profiles@2025-04-15' = {
   name: frontDoorName
@@ -84,7 +85,7 @@ resource origin 'Microsoft.Cdn/profiles/origingroups/origins@2025-04-15' = {
     enabledState: 'Enabled'
     sharedPrivateLinkResource: {
       privateLink: {
-        id: resourceId('Microsoft.ApiManagement/service', apimName)
+        id: apimResourceId // Use the passed APIM resource ID
       }
       groupId: 'Gateway'
       privateLinkLocation: location
@@ -125,6 +126,9 @@ resource afdRoute 'Microsoft.Cdn/profiles/afdendpoints/routes@2025-04-15' = {
     httpsRedirect: 'Enabled'
     enabledState: 'Enabled'
   }
+  dependsOn: [
+    origin
+  ]
 }
 
 resource afdSecurityPolicy 'Microsoft.Cdn/profiles/securitypolicies@2025-04-15' = {
